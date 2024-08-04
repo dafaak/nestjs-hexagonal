@@ -15,7 +15,7 @@ export class MongoRepository implements UserRepository {
   }
 
   getOneById(id: UserId): Promise<User | null> {
-    throw new Error('Method not implemented.');
+    return this.dataSource.getOneById(id);
   }
 
   edit(user: User): Promise<void> {

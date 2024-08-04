@@ -6,7 +6,7 @@ export interface UserRepository {
 
   getAll(): Promise<User[]>;
 
-  getOneById(id: UserId): Promise<User | null>;
+  getOneById(id: UserId): Promise<User>;
 
   edit(user: User): Promise<void>;
 

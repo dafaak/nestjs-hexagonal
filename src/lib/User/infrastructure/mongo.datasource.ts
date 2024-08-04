@@ -6,6 +6,7 @@ import { MapUserToDomain } from '../../types/map-user-to-domain';
 import { Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { UserInterface } from './Nestjs/mongo/schemas/user.interface';
+import { CustomError } from '../domain/errors/custom.error';
 
 export class DatasourceImpl extends Datasource {
   constructor(
@@ -24,8 +25,16 @@ export class DatasourceImpl extends Datasource {
     return users.map((user) => this.userMapper(user));
   }
 
-  getOneById(id: UserId): Promise<User | null> {
-    throw new Error('Method not implemented.');
+  async getOneById(id: UserId): Promise<User | null> {
+    try {
+      const user = await this.UserModel.findOne({ _id: id.value });
+
+      if (!user) return null;
+
+      return this.userMapper(user);
+    } catch (e) {
+      throw CustomError.internalServer('Internal server error');
+    }
   }
 
   edit(user: User): Promise<void> {

@@ -6,7 +6,7 @@ export abstract class Datasource {
 
   abstract getAll(): Promise<User[]>;
 
-  abstract getOneById(id: UserId): Promise<User | null>;
+  abstract getOneById(id: UserId): Promise<User>;
 
   abstract edit(user: User): Promise<void>;
 
