@@ -1,5 +1,4 @@
 import { User } from '../../domain/User';
-import { UserCreatedAt } from '../../domain/UserCreatedAt';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserId } from '../../domain/UserId';
 import { UserName } from '../../domain/UserName';
@@ -18,7 +17,7 @@ export class UserCreate {
       id: new UserId(id),
       name: new UserName(name),
       email: new UserEmail(email),
-      createdAt: new UserCreatedAt(createdAt),
+      createdAt: createdAt,
     });
 
     return this.repository.create(user);
