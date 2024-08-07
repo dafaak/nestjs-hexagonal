@@ -28,6 +28,9 @@ describe('UserController', () => {
   const mockUserGetAll = {
     run: jest.fn(),
   };
+  const mockUserGetOneById = {
+    run: jest.fn(),
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -38,9 +41,7 @@ describe('UserController', () => {
         },
         {
           provide: 'UserGetOneById',
-          useFactory: (id: string) => {
-            run: jest.fn(() => mockedUsers[0]);
-          },
+          useValue: mockUserGetOneById,
         },
         {
           provide: 'UserCreate',
@@ -88,5 +89,22 @@ describe('UserController', () => {
     const res = await controller.getAll();
     expect(res).toEqual([mockedUsers[1]]);
     expect(mockUserGetAll.run).toHaveBeenCalled();
+  });
+
+  it('should call method "run" of userGetOneById use case', async () => {
+    const id = mockedUsers[0].id;
+    const user = new User({
+      id: new UserId(mockedUsers[0].id),
+      name: new UserName(mockedUsers[0].name),
+      email: new UserEmail(mockedUsers[0].email),
+      createdAt: new Date(mockedUsers[0].createdAt),
+      updatedAt: new Date(mockedUsers[0].updatedAt),
+    });
+    jest.spyOn(mockUserGetOneById, 'run').mockReturnValue(user);
+
+    const res = await controller.getOneById(id);
+
+    expect(mockUserGetOneById.run).toHaveBeenCalledWith(id);
+    expect(res).toEqual(mockedUsers[0]);
   });
 });
