@@ -2,7 +2,12 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { DatabaseModule } from './provider/database.module';
 import { userProviders } from '../mongoose/user.provider';
-import { UserCreate, UserGetAll, UserGetOneById } from '../../application';
+import {
+  UserCreate,
+  UserEdit,
+  UserGetAll,
+  UserGetOneById,
+} from '../../application';
 import { Model } from 'mongoose';
 import { Datasource } from '../../domain/datasource';
 import { MongoRepository } from '../mongo.repository';
@@ -40,6 +45,11 @@ import { UserInterface } from '../mongoose/schemas/user.interface';
     {
       provide: 'UserCreate',
       useFactory: (repository: UserRepository) => new UserCreate(repository),
+      inject: ['MongoRepository'],
+    },
+    {
+      provide: 'UserEdit',
+      useFactory: (repository: UserRepository) => new UserEdit(repository),
       inject: ['MongoRepository'],
     },
   ],

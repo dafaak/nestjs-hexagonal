@@ -5,14 +5,22 @@ import {
   HttpException,
   Inject,
   InternalServerErrorException,
+  Param,
   Post,
+  Put,
   Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserCreate, UserGetAll, UserGetOneById } from '../../application';
+import {
+  UserCreate,
+  UserEdit,
+  UserGetAll,
+  UserGetOneById,
+} from '../../application';
 import { CustomError } from '../../domain/errors/custom.error';
 import { Create } from './dtos/create.dto';
+import { Edit } from './dtos/edit.dto';
 
 @Controller('user')
 export class UserController {
@@ -20,6 +28,7 @@ export class UserController {
     @Inject('UserGetAll') private readonly userGetAll: UserGetAll,
     @Inject('UserGetOneById') private readonly userGetOneById: UserGetOneById,
     @Inject('UserCreate') private readonly userCreate: UserCreate,
+    @Inject('UserEdit') private readonly userEdit: UserEdit,
   ) {}
 
   @Get()
@@ -50,6 +59,16 @@ export class UserController {
         user.email,
         new Date(),
       );
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+
+  @Put(':id')
+  @UsePipes(ValidationPipe)
+  async editUser(@Param('id') id: string, @Body() user: Edit) {
+    try {
+      return await this.userEdit.run(id, user.name, user.email);
     } catch (e) {
       this.handleError(e);
     }

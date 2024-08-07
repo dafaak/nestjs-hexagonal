@@ -24,13 +24,13 @@ export class DatasourceImpl extends Datasource {
     const existsId = await this.UserModel.findOne({ id: user.id.value });
 
     if (existsEmail || existsId)
-      throw CustomError.badRequest('User already registerd');
+      throw CustomError.badRequest('User already registered');
 
     await this.UserModel.create({
       id: user.id.value,
       name: user.name.value,
       email: user.email.value,
-      createdAt: user.createdAt.value,
+      createdAt: user.createdAt,
     });
   }
 
@@ -51,8 +51,26 @@ export class DatasourceImpl extends Datasource {
     }
   }
 
-  edit(user: User): Promise<void> {
-    throw new Error('Method not implemented.');
+  async edit(user: User): Promise<void> {
+    const existsId = await this.UserModel.findOne({ id: user.id.value });
+
+    if (!existsId) throw CustomError.badRequest('User is not registered');
+
+    if (user?.email?.value) {
+      const existsEmail = await this.UserModel.findOne({
+        email: user.email.value,
+      });
+      if (existsEmail) throw CustomError.badRequest('Email already registered');
+    }
+
+    const userToEdit = user.toPlainObject();
+
+    const { id, ...updateFields } = userToEdit;
+
+    await this.UserModel.updateOne(
+      { id: user.id.value },
+      { ...updateFields, updatedAt: new Date() },
+    );
   }
 
   delete(id: UserId): Promise<void> {
