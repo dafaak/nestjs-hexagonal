@@ -1,26 +1,28 @@
-import { UserCreatedAt } from './UserCreatedAt';
 import { UserEmail } from './UserEmail';
 import { UserId } from './UserId';
 import { UserName } from './UserName';
 
 export class User {
   id: UserId;
-  name: UserName;
-  email: UserEmail;
-  createdAt: UserCreatedAt;
+  name?: UserName;
+  email?: UserEmail;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   constructor(user: {
     id: UserId;
-    name: UserName;
-    email: UserEmail;
-    createdAt: UserCreatedAt;
+    name?: UserName;
+    email?: UserEmail;
+    createdAt?: Date;
+    updatedAt?: Date;
   }) {
-    const { id, name, email, createdAt } = user;
+    const { id, name, email, createdAt, updatedAt } = user;
 
     this.id = id;
-    this.name = name;
-    this.email = email;
-    this.createdAt = createdAt;
+    if (name) this.name = name;
+    if (email) this.email = email;
+    if (createdAt) this.createdAt = createdAt;
+    if (updatedAt) this.updatedAt = updatedAt;
   }
 
   // estás funciones se llaman servicio de dominio
@@ -31,9 +33,10 @@ export class User {
   public toPlainObject() {
     return {
       id: this.id.value,
-      name: this.name.value,
-      email: this.email.value,
-      createdAt: this.createdAt.value,
+      name: this.name?.value,
+      email: this.email?.value,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }
