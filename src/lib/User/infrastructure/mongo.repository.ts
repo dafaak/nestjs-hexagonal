@@ -7,7 +7,7 @@ export class MongoRepository implements UserRepository {
   constructor(private readonly dataSource: Datasource) {}
 
   create(user: User): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.dataSource.create(user);
   }
 
   getAll(): Promise<User[]> {
