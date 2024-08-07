@@ -56,12 +56,7 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async createUser(@Body() user: Create) {
     try {
-      return await this.userCreate.run(
-        user.id,
-        user.name,
-        user.email,
-        new Date(),
-      );
+      return await this.userCreate.run(user.id, user.name, user.email);
     } catch (e) {
       this.handleError(e);
     }
