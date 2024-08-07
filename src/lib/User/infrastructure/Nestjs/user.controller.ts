@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Inject,
@@ -14,6 +15,7 @@ import {
 } from '@nestjs/common';
 import {
   UserCreate,
+  UserDelete,
   UserEdit,
   UserGetAll,
   UserGetOneById,
@@ -29,6 +31,7 @@ export class UserController {
     @Inject('UserGetOneById') private readonly userGetOneById: UserGetOneById,
     @Inject('UserCreate') private readonly userCreate: UserCreate,
     @Inject('UserEdit') private readonly userEdit: UserEdit,
+    @Inject('UserDelete') private readonly userDelete: UserDelete,
   ) {}
 
   @Get()
@@ -69,6 +72,15 @@ export class UserController {
   async editUser(@Param('id') id: string, @Body() user: Edit) {
     try {
       return await this.userEdit.run(id, user.name, user.email);
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    try {
+      return this.userDelete.run(id);
     } catch (e) {
       this.handleError(e);
     }

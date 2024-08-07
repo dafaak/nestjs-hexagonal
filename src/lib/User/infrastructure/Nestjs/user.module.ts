@@ -4,6 +4,7 @@ import { DatabaseModule } from './provider/database.module';
 import { userProviders } from '../mongoose/user.provider';
 import {
   UserCreate,
+  UserDelete,
   UserEdit,
   UserGetAll,
   UserGetOneById,
@@ -50,6 +51,11 @@ import { UserInterface } from '../mongoose/schemas/user.interface';
     {
       provide: 'UserEdit',
       useFactory: (repository: UserRepository) => new UserEdit(repository),
+      inject: ['MongoRepository'],
+    },
+    {
+      provide: 'UserDelete',
+      useFactory: (repository: UserRepository) => new UserDelete(repository),
       inject: ['MongoRepository'],
     },
   ],

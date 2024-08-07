@@ -23,6 +23,6 @@ export class MongoRepository implements UserRepository {
   }
 
   delete(id: UserId): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.dataSource.delete(id);
   }
 }

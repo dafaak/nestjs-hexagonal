@@ -41,7 +41,7 @@ export class DatasourceImpl extends Datasource {
 
   async getOneById(id: UserId): Promise<User | null> {
     try {
-      const user = await this.UserModel.findOne({ _id: id.value });
+      const user = await this.UserModel.findOne({ id: id.value });
 
       if (!user) return null;
 
@@ -54,7 +54,7 @@ export class DatasourceImpl extends Datasource {
   async edit(user: User): Promise<void> {
     const existsId = await this.UserModel.findOne({ id: user.id.value });
 
-    if (!existsId) throw CustomError.badRequest('User is not registered');
+    if (!existsId) throw CustomError.notFound('User is not registered');
 
     if (user?.email?.value) {
       const existsEmail = await this.UserModel.findOne({
@@ -73,7 +73,10 @@ export class DatasourceImpl extends Datasource {
     );
   }
 
-  delete(id: UserId): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: UserId): Promise<void> {
+    const existsId = await this.UserModel.findOne({ id: id.value });
+
+    if (!existsId) throw CustomError.notFound('User is not registered');
+    await this.UserModel.deleteOne({ id: id.value });
   }
 }
