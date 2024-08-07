@@ -31,6 +31,10 @@ describe('UserController', () => {
   const mockUserGetOneById = {
     run: jest.fn(),
   };
+
+  const mockUserCreate = {
+    run: jest.fn(),
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -45,12 +49,7 @@ describe('UserController', () => {
         },
         {
           provide: 'UserCreate',
-          useFactory: () => {
-            run: jest.fn(
-              (id: string, name: string, email: string, createdAt: Date) =>
-                Promise<void>,
-            );
-          },
+          useValue: mockUserCreate,
         },
         {
           provide: 'UserEdit',
@@ -76,7 +75,7 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call method "run" of userGetAll usecase', async () => {
+  it('should call method "run" of userGetAll usecase, and return an array of users', async () => {
     const user = new User({
       id: new UserId(mockedUsers[1].id),
       name: new UserName(mockedUsers[1].name),
@@ -91,8 +90,8 @@ describe('UserController', () => {
     expect(mockUserGetAll.run).toHaveBeenCalled();
   });
 
-  it('should call method "run" of userGetOneById use case', async () => {
-    const id = mockedUsers[0].id;
+  it('should call method "run" of userGetOneById use case, and return the user found', async () => {
+    const searchId = mockedUsers[0].id;
     const user = new User({
       id: new UserId(mockedUsers[0].id),
       name: new UserName(mockedUsers[0].name),
@@ -102,9 +101,19 @@ describe('UserController', () => {
     });
     jest.spyOn(mockUserGetOneById, 'run').mockReturnValue(user);
 
-    const res = await controller.getOneById(id);
+    const res = await controller.getOneById(searchId);
 
-    expect(mockUserGetOneById.run).toHaveBeenCalledWith(id);
+    expect(mockUserGetOneById.run).toHaveBeenCalledWith(searchId);
     expect(res).toEqual(mockedUsers[0]);
+  });
+
+  it('should call method "run" of userCreate usecase', async () => {
+    const { createdAt, updatedAt, ...userToCreate } = mockedUsers[1];
+    jest.spyOn(mockUserCreate, 'run');
+
+    await controller.createUser(userToCreate);
+    expect(mockUserCreate.run).toHaveBeenCalledWith(
+      ...Object.values(userToCreate),
+    );
   });
 });
