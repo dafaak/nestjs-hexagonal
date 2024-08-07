@@ -35,8 +35,8 @@ export class User {
       id: this.id.value,
       name: this.name?.value,
       email: this.email?.value,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      createdAt: this.createdAt?.toISOString(),
+      updatedAt: this.updatedAt?.toISOString(),
     };
   }
 }
