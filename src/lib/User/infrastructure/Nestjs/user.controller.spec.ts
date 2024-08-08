@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
-import spyOn = jest.spyOn;
 import { User } from '../../domain/User';
 import { UserId } from '../../domain/UserId';
 import { UserName } from '../../domain/UserName';
 import { UserEmail } from '../../domain/UserEmail';
+import { Edit } from './dtos/edit.dto';
 
 const mockedUsers = [
   {
@@ -31,8 +31,13 @@ describe('UserController', () => {
   const mockUserGetOneById = {
     run: jest.fn(),
   };
-
   const mockUserCreate = {
+    run: jest.fn(),
+  };
+  const mockUserDelete = {
+    run: jest.fn(),
+  };
+  const mockUserEdit = {
     run: jest.fn(),
   };
   beforeEach(async () => {
@@ -53,17 +58,11 @@ describe('UserController', () => {
         },
         {
           provide: 'UserEdit',
-          useFactory: () => {
-            run: jest.fn(
-              (id: string, name?: string, email?: string) => Promise<void>,
-            );
-          },
+          useValue: mockUserEdit,
         },
         {
           provide: 'UserDelete',
-          useFactory: () => {
-            run: jest.fn((id: string) => Promise<void>);
-          },
+          useValue: mockUserDelete,
         },
       ],
     }).compile();
@@ -114,6 +113,25 @@ describe('UserController', () => {
     await controller.createUser(userToCreate);
     expect(mockUserCreate.run).toHaveBeenCalledWith(
       ...Object.values(userToCreate),
+    );
+  });
+
+  it('should call method "run" of userDelete usecase', async () => {
+    const spy = jest.spyOn(mockUserDelete, 'run');
+    await controller.deleteUser(mockedUsers[0].id);
+    expect(spy).toHaveBeenCalledWith(mockedUsers[0].id);
+  });
+
+  it('should call method "run" of userEdit', async () => {
+    const spy = jest.spyOn(mockUserEdit, 'run');
+    const editInfo: Edit = {
+      name: mockedUsers[0].name,
+      email: mockedUsers[1].email,
+    };
+    await controller.editUser(mockedUsers[0].id, editInfo);
+    expect(spy).toHaveBeenCalledWith(
+      mockedUsers[0].id,
+      ...Object.values(editInfo),
     );
   });
 });
