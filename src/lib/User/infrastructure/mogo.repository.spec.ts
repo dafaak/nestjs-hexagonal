@@ -26,7 +26,7 @@ describe('MongoRepository', () => {
     edit: jest.fn(),
     delete: jest.fn(),
   };
-  beforeEach(async () => {
+  beforeEach(() => {
     repository = new MongoRepository(mockedDataSource);
   });
 
